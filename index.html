@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minecraft</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+  <body>
+    <div class="container">
+      <div class="area">
+        <div class="game-area"></div>
+        <div class="menu">
+          <button class="start">Start Game</button>
+        </div>
+      </div>
 
-  <title>Minecraft</title>
-  
-</head>
+      <div class="tools">
+        <div class="sidebar-toolsList">
+          <div class="tool" data-tool="0">
+            <div class="img"></div>
+            <h3>PICKAXE</h3>
+          </div>
+          <div class="tool" data-tool="1">
+            <div class="img"></div>
+            <h3>SHOVEL</h3>
+          </div>
+          <div class="tool" data-tool="2">
+            <div class="img"></div>
+            <h3>AXE</h3>
+          </div>
 
-<body>
+          <div class="data-type" data-type=""></div>
+        </div>
+      </div>
+    </div>
 
-  <div class="hello">
-  <div class="logoHolder"><img src="http://itc.yananas.com/git/minecraft/images/MinecraftLogo.png" alt=""></div>
-  <div class="start"><button class="action-button shadow animate blue welcome">Start</button></div>
-  
-  <script src="main.js"></script>
-<body>
-
-
-</body>
+    <script src="main.js"></script>
+  </body>
 </html>

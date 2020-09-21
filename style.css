@@ -1,151 +1,194 @@
-div.block {
-  width: 50px;
-  height: 50px;
-  display: inline-block;
-  background-size: contain;
-  color: #fff;
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-div#map {
-  background: #8cbffb;
-  line-height: 0;
-  margin: 0 auto;
-  box-shadow: 0 0 0 7px rgba(0, 0, 0, 0.8);
-  position: relative;
-  margin-top: 7px;
-}
-.red {
-  background-color: #E74C3C;
-  border-bottom: 5px solid #BD3E31;
-  text-shadow: 0px -2px #BD3E31;
-}
-.green {
-  background-color: #82BF56;
-  border-bottom: 5px solid #669644;
-  text-shadow: 0px -2px #669644;
-}
-.yellow {
-  background-color: #F2CF66;
-  border-bottom: 5px solid #D1B358;
-  text-shadow: 0px -2px #D1B358;
-}
-.difficulty {
-  text-align: center;
-  margin-top: 50px;
-}
-.block:hover {
-  -webkit-box-shadow: 0px 0px 1px 2px #ffffff;
-  -moz-box-shadow: 0px 0px 1px 2px #ffffff;
-  box-shadow: 0px 0px 1px 2px #ffffff;
-}
-.inventory-container {
-  position: fixed;
-  right: 0;
-  width: 60px;
-  top: 0;
-}
-.tools-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-/* .reset img {
-  -webkit-animation: spin 0.2s ease-in-out;
-  -moz-animation: spin 0.2s ease-in-out;
-  animation: spin 0.2s ease-in-out;
-  animation-fill-mode: forwards;
-} */
-/* @-moz-keyframes spin {
-  100% {
-      -moz-transform: rotate(360deg);
-  }
-}
-@-webkit-keyframes spin {
-  100% {
-      -webkit-transform: rotate(360deg);
-  }
-}
-@keyframes spin {
-  100% {
-      -webkit-transform: rotate(360deg);
-      transform: rotate(360deg);
-  }
-} */
-.buttons-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-}
-.bgholder > div > img {
+
+.container {
   width: 100%;
-  padding: 7px;
+  background: #a09f9f;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
 }
-.bgholder {
-  cursor: pointer;
+
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
 }
-.bgholder > div {
-  display: inline-block;
-  width: 60px;
-  height: 60px;
-  background-size: contain;
-  background-image: url('http://itc.yananas.com/git/minecraft/images/slot.png');
-  background-size: contain;
-}
-.bgholder > .active {
-  box-shadow: inset 0 0 0 7px rgba(255, 255, 255, .5);
-}
-div#buttons {
-  background: #c1ffc3;
-  padding: 20px;
-}
-.hello {
-  position: fixed;
-  background: rgba(255, 255, 255, 0.88);
-  z-index: 10;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-}
-.animate {
-  transition: all 0.1s;
-  -webkit-transition: all 0.1s;
-}
-.action-button:active,
-.selected {
-  transform: translate(0px, 5px);
-  -webkit-transform: translate(0px, 5px);
-  border-bottom: 1px solid;
-}
-.action-button {
-  outline: none;
+
+
+.menu {
+  width: 100%;
+  height: 100vh;
+  background: url('./images/MinecraftLogo.png') no-repeat center center/contain;
   position: relative;
-  padding: 10px 40px;
-  border-radius: 10px;
-  font-family: 'Pacifico', cursive;
-  font-size: 25px;
-  color: #FFF;
-  text-decoration: none;
 }
-.blue {
-  background-color: #333;
-  border-bottom: 5px solid #333;
-  text-shadow: 0px -2px #333;
+
+.start {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, rgb(219, 218, 218), rgba(0, 0, 0, 1));
+  color: white;
+  font-family: 'mincraft';
+  font-size: 20px;
+  box-shadow: 1px 2px 3px white;
+  padding: 30px 60px;
+  z-index: 1;
+  transition: all 0.3s ease-in-out;
 }
-.logoHolder {
+
+.start:hover {
+  background: linear-gradient(to bottom, rgba(63, 63, 63, 0.9), rgba(0, 0, 0, 0.9));
+}
+
+.area {
+  width: 80vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-area {
+  background: transparent;
+  width: 80%;
+  justify-content: center;
+}
+
+
+.tile {
+  height: 9vh;
+  width: 9vh;
+  transition: background 0.8s ease-in-out;
+  background: lightblue no-repeat center center/cover;
+}
+
+.tile:hover {
+  border: 1px solid white;
+}
+
+.tile[data-type="-1"] {
+  background: lightblue;
+}
+
+.tile[data-type="0"] {
+  background: url('./images/dirt.png') no-repeat center center/cover;
+}
+
+.tile[data-type="1"] {
+  background: url('./images/grass.png') no-repeat center center/cover;
+}
+
+.tile[data-type="2"] {
+  background: url('./images/leaf.png') no-repeat center center/cover;
+}
+
+.tile[data-type="3"] {
+  background: url('./images/dirt.png') no-repeat center center/cover;
+}
+
+.tile[data-type="4"] {
+  background: url('./images/rock.png') no-repeat center center/cover;
+}
+
+.tile[data-type="5"] {
+  background: url('./images/lava.png') no-repeat center center/cover;
+}
+
+
+.tools {
+  background: #333333;
+  width: 20vw;
+  padding: 50px 10px;
+  color: white;
+}
+
+.tool {
+  padding: 10px;
+  padding-bottom: 2px;
+  text-align: center;
+  width: 50%;
+  font-size: 0.9em;
+  border: 2px solid white;
+  transition: background 0.5s ease-in-out;
+}
+
+.tool:hover {
+  background: blue;
+}
+
+.tool.active {
+  background: blue;
+  opacity: 0.7;
+}
+
+.tool.active.warning {
+  background: red;
+  opacity: 0.7;
+}
+
+.tool .img {
+  height: 80%;
   width: 80%;
   margin: 0 auto;
+  background: white;
+  background-size: contain;
 }
-.logoHolder img {
-  width: 100%;
+
+.tool[data-tool="1"]>.img {
+  background: url('./images/shovel.png') no-repeat center center/contain;
 }
-.start {
-  text-align: center;
+
+.tool[data-tool="0"]>.img {
+  background: url('./images/pickaxe.png') no-repeat center center/contain;
 }
-.inv span {
-  font-size: 1.5em;
-  color: #fff;
-  text-align: right;
-  display: block;
-  margin-top: -16px;
-  margin-right: 8px;
+
+.tool[data-tool="2"]>.img {
+  background: url('./images/axe.png') no-repeat center center/contain;
+}
+
+.sidebar-toolsList {
+  display: grid;
+  justify-items: center;
+  grid-gap: 2rem;
+  width: 80%;
+  height: 100%;
+  margin: auto;
+}
+
+.data-type {
+  width: 8vh;
+  height: 8vh;
+  border: 2px solid white;
+}
+
+.data-type[data-type="-1"] {
+  background: transparent;
+}
+
+.data-type[data-type="0"] {
+  background: url('./images/dirt.png') no-repeat center center/cover;
+}
+
+.data-type[data-type="1"] {
+  background: url('./images/grass.png') no-repeat center center/cover;
+}
+
+.data-type[data-type="2"] {
+  background: url('./images/leaf.png') no-repeat center center/cover;
+}
+
+.data-type[data-type="3"] {
+  background: url('./images/tree.png') no-repeat center center/cover;
+}
+
+.data-type[data-type="4"] {
+  background: url('./images/rock.png') no-repeat center center/cover;
+}
+
+.data-type[data-type="5"] {
+  background: url('./images/cloud.png') no-repeat center center/cover;
 }

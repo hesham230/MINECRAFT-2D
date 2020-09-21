@@ -1,291 +1,263 @@
-let Minecraft = {}; // namespace
+const tools = document.querySelectorAll(".tool");
+const menu = document.querySelector(".menu");
+const startBtn = document.querySelector(".start");
+const table = document.querySelector(".game-area");
+const lastElement = document.querySelector(".data-type");
 
-Minecraft.allBlocks = [];
-Minecraft.selectedWidth = 1000; /// default map width
+const state = {
+  gameStart: false,
+  worldMatrix: [],
+  selectedTool: -1,
+  lastTile: -1,
+};
 
-Minecraft.start = function() { // starting game
-    let letsPlay = new Minecraft.map;
-    letsPlay.generateMap(Minecraft.selectedWidth);
-    letsPlay.generateBlock();
-    Minecraft.elements(Minecraft.random(2, Minecraft.oneLine), ground);
-    Minecraft.initializeTools();
-    Minecraft.buttons();
-}
+const startGame = () => {
+  menu.style.display = "none";
+};
+const createWorld = (matrix, tileHandler) => {
+  for (let i = 0; i < matrix.length; i++) {
+    const line = document.createElement("div");
+    line.classList.add("row");
 
-// button handlers
+    for (let j = 0; j < matrix[i].length; j++) {
+      const tile = document.createElement("div");
+      tile.classList.add("tile");
 
-Minecraft.buttons = function() {
-
-    (".reset").click(function() {
-        $("#map").remove();
-        Minecraft.allBlocks = [];
-        Minecraft.selectedTool = [];
-        inventoryCounter = {};
-        Minecraft.start();
-    })
-}
-
-// random number function
-
-Minecraft.random = function(min, max, excluded) { 
-    let n = Math.floor(Math.random() * (max - min) + min);
-    if (n >= excluded) n++;
-    return n;
-}
-
- // tools handler
-
-Minecraft.selectedTool = [];
-
-Minecraft.tools = function(type, approachedBlock) {
-    this.type = type;
-    this.approachedBlock = approachedBlock;
-    var self = this;
-    this.toolHolder = $("<div>", {
-        "class": "tool " + this.type
-    }).append("<img src='http://itc.yananas.com/git/minecraft/images/" + this.type + ".png'>");
-    $(".tools-container").append(this.toolHolder);
-    this.toolHolder.click(function() {
-        Minecraft.selectedInventory = null;
-        Minecraft.selectedTool = [];
-        Minecraft.selectedTool = self.approachedBlock;
-        $("div").removeClass('active');
-        $(this).addClass('active');
-        $("#map").css('cursor', 'url(http://itc.yananas.com/git/minecraft/images/cursors/' + self.type + '.png), auto');
-    })
-}
-
-// creating the tools
-
-Minecraft.initializeTools = function() {
-    new Minecraft.tools("axe", ["tree", "leaf"]);
-    new Minecraft.tools("shovel", ["dirt", "grass"]);
-    new Minecraft.tools("pickaxe", ["rock"]);
-    // new Minecraft.tools("eraser", ["tree", "leaf", "dirt", "grass", "rock", "cloud", "lava"]);
-}
-
-// block handler object
-
-Minecraft.block = function(type, x, y) {
-    this.type = type;
-    this.coordinates = [x, y];
-    var self = this;
-    this.blockHolder = $("<div>", {
-        "class": "block " + this.type,
-        "style": "background-image: url('http://itc.yananas.com/git/minecraft/images/" + this.type + ".png')"
-    });
-    $("#map").append(this.blockHolder);
-    this.changeType = function(type) { // changing block type function
-        this.type = type;
-        this.blockHolder.css("background-image", "url('http://itc.yananas.com/git/minecraft/images/" + this.type + ".png')");
-        this.blockHolder.removeClass().addClass("block " + this.type);
+      for (const [key, value] of Object.entries(matrix[i][j])) {
+        tile.dataset[key] = value;
+      }
+      tile.addEventListener("click", tileHandler);
+      line.appendChild(tile);
     }
 
-    this.blockHolder.click(function() { // clicking block handler
+    table.appendChild(line);
+  }
+};
 
-        for (var i = 0; i < Minecraft.selectedTool.length; i++) {
-            targetBlock = Minecraft.selectedTool[i];
-            if (targetBlock == self.type) {
-                if (testArray = self.type in inventoryCounter) {} else {
-                    inventoryCounter[self.type] = 0;
-                }
-                self.changeType("blank");
-                new Minecraft.inventory(targetBlock);
-            }
-
-        }
-        if (Minecraft.selectedInventory != null && inventoryCounter[Minecraft.selectedInventory] != 0) { // replace block from inventory
-            if (self.type == "blank") {
-                self.changeType(Minecraft.selectedInventory);
-                inventoryCounter[Minecraft.selectedInventory]--;
-                $("." + self.type + " span").text(inventoryCounter[Minecraft.selectedInventory]);
-                if (inventoryCounter[Minecraft.selectedInventory] == 0) { // empty inventory handler
-                    Minecraft.selectedInventory = null;
-                    $("#map").css('cursor', 'auto');
-                    $(".inventory-container ." + self.type).remove();
-                }
-            }
-        }
-
-    })
-}
-
-// initializing selected inventory
-
-Minecraft.selectedInventory; 
-
-// inventory handler
-
-Minecraft.inventory = function(type) {
-    var self = this;
-    this.type = type;
-    var $inv = $("<div>", {
-        'class': 'inv ' + this.type
-    }).append("<img src='http://itc.yananas.com/git/minecraft/images/" + this.type + ".png'>")
-    var $counting = $("<span>")
-    $($inv).append($counting);
-    inventoryCounter[targetBlock]++;
-    $("." + this.type + " span").text(inventoryCounter[type]);
-    if ($('.inventory-container .' + self.type).length == 0) {
-        $(".inventory-container").append($inv);
-        $("." + this.type + " span").text(inventoryCounter[type]);
+const createMatrix = (row, col) => {
+  let mat = [];
+  for (let i = 0; i < row; i++) {
+    const r = [];
+    for (let j = 0; j < col; j++) {
+      r.push({});
     }
-    $inv.click(function() {
-        Minecraft.selectedTool = [];
-        $(".tool").removeClass("active");
-        $(this).addClass("active");
-        $("#map").css('cursor', 'url(http://itc.yananas.com/git/minecraft/images/cursors/' + self.type + '.png), auto');
-        Minecraft.selectedInventory = self.type;
-    })
+    mat.push(r);
+  }
 
-}
+  const dirt = row - parseInt(Math.floor(Math.random() * 4) * 0.1 * row);
 
-// inventory block counter
-
-var inventoryCounter = {};
-
-// map handler
-
-Minecraft.map = function() {
-    this.x = 1;
-    this.y = 0;
-
-    this.generateMap = function(mapWidth) {
-        Minecraft.mapWidth = mapWidth;
-        var $mapHolder = $("<div>", {
-            id: 'map',
-            'style': 'width: ' + mapWidth + 'px'
-        }) // UI button creations
-        var $toolContainer = $("<div>", {
-            'class': 'tools-container bgholder'
-        })
-        var $inventoryContainer = $("<div>", {
-            'class': 'inventory-container bgholder'
-        })
-        var $buttonsContainer = $("<div>", {
-            'class': 'buttons-container bgholder'
-        })
-        var $resetButton = $("<div>", {
-            'class': 'reset'
-        }).append("<img src='http://itc.yananas.com/git/minecraft/images/reset.png'>");
-
-        $('body').append($mapHolder);
-        $($mapHolder).append($toolContainer);
-        $($mapHolder).append($inventoryContainer);
-        $($mapHolder).append($buttonsContainer);
-        $($buttonsContainer).append($resetButton);
-
-        Minecraft.oneLine = mapWidth / 50; // calculating how much blocks is one line
+  for (let i = row - 1; i >= 0; i--) {
+    for (let j = 0; j < col; j++) {
+      const tile = {};
+      tile.col = j;
+      tile.row = i;
+      if (i >= dirt) {
+        tile.type = 0;
+      } else if (i === dirt - 1) {
+        tile.type = 1;
+      } else if (i === dirt - 2) {
+        if (j >= col - 2) {
+          mat[i][j] = {
+            type: -1,
+            col: j,
+            row: i,
+          };
+          mat[i - 1][j] = {
+            type: -1,
+            col: j,
+            row: i - 1,
+          };
+          mat[i - 2][j] = {
+            type: -1,
+            col: j,
+            row: i - 2,
+          };
+        } else {
+          const rand = random();
+          mat[i - 2][j] = {
+            type: rand[0],
+            col: j,
+            row: i - 2,
+          };
+          mat[i - 2][j + 1] = {
+            type: rand[1],
+            col: j + 1,
+            row: i - 2,
+          };
+          mat[i - 2][j + 2] = {
+            type: rand[2],
+            col: j + 2,
+            row: i - 2,
+          };
+          mat[i - 1][j] = {
+            type: rand[3],
+            col: j,
+            row: i - 1,
+          };
+          mat[i - 1][j + 1] = {
+            type: rand[4],
+            col: j + 1,
+            row: i - 1,
+          };
+          mat[i - 1][j + 2] = {
+            type: rand[5],
+            col: j + 2,
+            row: i - 1,
+          };
+          mat[i][j] = {
+            type: rand[6],
+            col: j,
+            row: i,
+          };
+          mat[i][j + 1] = {
+            type: rand[7],
+            col: j + 1,
+            row: i,
+          };
+          mat[i][j + 2] = {
+            type: rand[8],
+            col: j + 2,
+            row: i,
+          };
+          j += 2;
+        }
+        continue;
+      } else {
+        tile.type = -1;
+      }
+      mat[i][j] = tile;
     }
-    Minecraft.f = -1; // debugger for handling map generation correct coordinates
-    this.generateLines = function(block, lines) { // function to generate lines of block
-        for (var i = 0; i < lines; i++) {
-            this.x += 1;
-            if (i % Minecraft.oneLine === 0) {
-                this.y += 1;
-                this.x = 1;
-            }
-            Minecraft.allBlocks[(Minecraft.f + 1)] = new Minecraft.block(block, this.x, this.y);
-            Minecraft.f++;
-        }
-        if (block == "blank") {
-            ground = (this.y - 1);
-        }
-    };
-    this.generateBlock = function() {
-        this.generateLines("blank", Minecraft.mapWidth / 5);
-        this.generateLines("blank", Minecraft.oneLine);
-        this.generateLines("dirt", Minecraft.mapWidth / 10);
-        this.generateLines("lava", Minecraft.oneLine);
+
+    if (i === dirt - 2) {
+      i -= 2;
     }
-}
+  }
+  console.log(mat);
+  return mat;
+};
 
-Minecraft.RandomArray = new Array(Minecraft.oneLine); // random array to randomize dirt / grass generation 
+random = () => {
+  const type = Math.floor(Math.random() * 6);
 
+  switch (type) {
+    case 0:
+      return [2, 2, 2, 2, 2, 2, -1, 3, -1];
+    case 1:
+      return [-1, -1, -1, -1, -1, -1, 4, 4, -1];
+    case 2:
+      return [-1, -1, -1, -1, 2, -1, 2, 2, 2];
 
-Minecraft.elements = function(x, y) { // starting element generation
-    for (i = 0; i < Minecraft.oneLine; i++) {
-        Minecraft.RandomArray[i] = Math.floor(Math.random() * 3 + 1);
+    case 3:
+      return [-1, 2, -1, -1, 3, 4, -1, 3, 4];
+    case 4:
+      return [-1, -1, -1, 4, 4, 4, 4, 4, 4];
+
+    default:
+      return [-1, -1, -1, -1, -1, -1, -1, -1, -1];
+  }
+};
+
+const updateLastMindedTIle = (type) => {
+  state.lastTile = type;
+  lastElement.dataset.type = type;
+};
+const validTool = (type, selectedTool) => {
+  switch (selectedTool) {
+    case 0:
+      if (type == 4) return true;
+      break;
+    case 1:
+      if (type == 0 || type == 1) return true;
+      break;
+    case 2:
+      if (type == 2 || type == 3) return true;
+      break;
+    default:
+      console.error("invalid tool number");
+      break;
+  }
+
+  return false;
+};
+
+const toolwarning = () => {
+  tools.forEach((t) => {
+    t.classList.add("warning");
+    setTimeout(removeAllWarning, 1000);
+  });
+};
+
+const removeAllWarning = () => {
+  tools.forEach((t) => {
+    t.classList.remove("warning");
+  });
+};
+
+const resetSelectedTools = () => {
+  tools.forEach((t) => {
+    t.classList.remove("active");
+  });
+};
+
+const onStartGameClickHandler = (e) => {
+  menu.style.display = "none";
+  table.style.display = "block";
+
+  state.worldMatrix = createMatrix(12, 16);
+  createWorld(state.worldMatrix, tileOnClickHandler);
+};
+
+const toolOnClickHandler = (e) => {
+  const tool = e.currentTarget;
+  const toolType = parseInt(tool.dataset.tool);
+  if (isNaN(toolType)) {
+    console.error("invalid tool type");
+    return;
+  }
+  resetSelectedTools();
+  tool.classList.add("active");
+  state.selectedTool = toolType;
+};
+
+const tileOnClickHandler = (e) => {
+  console.log(e.currentTarget.dataset.type);
+  const tile = e.currentTarget;
+  let type = parseInt(tile.dataset.type);
+
+  if (isNaN(type)) {
+    console.error("invalid type");
+    return;
+  }
+
+  if (type >= 0) {
+    if (!validTool(type, state.selectedTool)) {
+      console.error("invalid tool");
+      toolwarning();
+      return;
     }
-    randomNumber = Minecraft.random(0, Minecraft.oneLine, x)
-    randomNumber2 = Minecraft.random(0, Minecraft.oneLine, x)
-    for (var i = 0; i < Minecraft.allBlocks.length; i++) {
 
-
-        // GENERATING TERRAIN
-
-        for (var terrain = 0; terrain < Minecraft.oneLine; terrain++) {
-            if (Minecraft.allBlocks[i].coordinates.join() == [terrain, (ground + Minecraft.RandomArray[terrain]) - 1].join()) {
-                Minecraft.allBlocks[i].changeType("grass");
-                Minecraft.allBlocks[i + Minecraft.oneLine].changeType("dirt");
-            }
-        }
-
-        // GENERATING 1 CLOUD 
-
-        for (var c = 0; c < 2; c++) {
-            for (var o = 0; o < 4; o++) {
-                if (Minecraft.allBlocks[i].coordinates.join() == [o + randomNumber, c + 2].join()) {
-                    Minecraft.allBlocks[i].changeType("cloud");
-                }
-            }
-        }
-
-        // GENERATING 2 CLOUD 
-
-        for (var c = 0; c < 2; c++) {
-            for (var o = 0; o < 4; o++) {
-                if (Minecraft.allBlocks[i].coordinates.join() == [o + randomNumber2, c + 3].join()) {
-                    Minecraft.allBlocks[i].changeType("cloud");
-                }
-            }
-        }
-
-
-        // GENERATING ROCKS
-        for (var z = 1; z < 5; z++) {
-            if (Minecraft.allBlocks[i].coordinates.join() == [randomNumber + (Minecraft.random(2, Minecraft.oneLine)), y].join()) {
-                Minecraft.allBlocks[i].changeType("rock");
-                Minecraft.allBlocks[i + Minecraft.oneLine].changeType("grass");
-                Minecraft.allBlocks[i + (Minecraft.oneLine * 2)].changeType("dirt");
-            }
-        }
-
-
-        // GENERATING TREE TRUNK
-
-        for (var j = 0; j < 2; j++) {
-            if (Minecraft.allBlocks[i].coordinates.join() == [x, (y - j)].join()) {
-                Minecraft.allBlocks[i].changeType("tree");
-            }
-
-            if (Minecraft.allBlocks[i].coordinates.join() == [x, (y - j) + 1].join()) {
-                Minecraft.allBlocks[i].changeType("tree");
-            }
-            // GENERATING TREE LEAVES
-
-            for (var line = 0; line < 3; line++) {
-                for (var p = -1; p < 2; p++) {
-                    if (Minecraft.allBlocks[i].coordinates.join() == [(x + p), (y - 2) - line].join()) {
-                        Minecraft.allBlocks[i].changeType("leaf");
-                    }
-                }
-            }
-        }
+    tileStateObject = state.worldMatrix[tile.dataset.row][tile.dataset.col];
+    if (!tileStateObject) {
+      return;
     }
-} // end elements
+    tileStateObject.type = -1;
+    tile.dataset.type = -1;
+    updateLastMindedTIle(type);
+  } else if (type == -1) {
+    if (state.lastTile >= 0) {
+      tile.dataset.type = state.lastTile;
+      state.lastTile = -1;
+      lastElement.dataset.type = -1;
+    }
+  }
+};
 
-$(document).ready(function() { // welcome screen reset game
-    $('.welcome').click(function() {
-        $('.hello').fadeOut("slow");
-        $("#map").remove();
-        Minecraft.allBlocks = [];
-        Minecraft.selectedTool = [];
-        inventoryCounter = {};
-        Minecraft.start();
-    })
-})
+const addEventsToTools = (toolOnClickHandler) => {
+  tools.forEach((tool) => {
+    tool.addEventListener("click", toolOnClickHandler);
+  });
+};
 
-
-
-Minecraft.start();
+table.style.display = "none";
+addEventsToTools(toolOnClickHandler);
+startBtn.addEventListener("click", onStartGameClickHandler);
